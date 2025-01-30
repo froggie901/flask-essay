@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="epub-container">
+    <h1>{{ title }}</h1>
+    <div class="epub-content">
+        {% for chapter in chapters %}
+            <div class="chapter">
+                <h2>{{ chapter.title }}</h2>
+                <div class="chapter-content">
+                    {{ chapter.content|safe }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

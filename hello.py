@@ -1,6 +1,31 @@
 from flask import Flask, render_template
+import ebooklib
+from ebooklib import epub
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
+
+def chapter_to_str(chapter):
+    soup = BeautifulSoup(chapter.get_body_content(), 'html.parser')
+    return str(soup)
+
+@app.route("/epub")
+def view_epub():
+    book = epub.read_epub('data/plath-bell-jar.epub')
+    
+    # Get the book title
+    title = book.get_metadata('DC', 'title')[0][0] if book.get_metadata('DC', 'title') else "The Bell Jar"
+    
+    # Process chapters
+    chapters = []
+    for item in book.get_items():
+        if item.get_type() == ebooklib.ITEM_DOCUMENT:
+            chapters.append({
+                'title': item.get_name(),
+                'content': chapter_to_str(item)
+            })
+    
+    return render_template('epub_viewer.html', title=title, chapters=chapters)
 
 # Context
 author_names = [
